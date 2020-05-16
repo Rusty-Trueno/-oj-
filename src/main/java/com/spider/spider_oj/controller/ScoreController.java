@@ -67,7 +67,7 @@ public class ScoreController {
             HttpEntity entity = response.getEntity();
             String responseEntity = EntityUtils.toString(entity);
             List<ScoreDo> scoreDoList = JSON.parseArray(responseEntity,ScoreDo.class);
-            System.out.println(scoreToExcelService.writeScoreListToExcel(scoreDoList));
+            System.out.println(scoreToExcelService.writeScoreListToExcel(scoreDoList,contestId));
         } catch (Exception e) {
             e.printStackTrace();
         }

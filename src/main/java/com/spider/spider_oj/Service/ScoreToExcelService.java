@@ -9,5 +9,5 @@ import java.util.List;
  */
 public interface ScoreToExcelService {
 
-    List<ScoreDo> writeScoreListToExcel(List<ScoreDo> scoreDoList);
+    List<ScoreDo> writeScoreListToExcel(List<ScoreDo> scoreDoList,Integer contestId);
 }

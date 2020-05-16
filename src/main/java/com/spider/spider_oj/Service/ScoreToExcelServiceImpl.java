@@ -15,11 +15,11 @@ import java.util.List;
 @Service
 public class ScoreToExcelServiceImpl implements ScoreToExcelService{
     @Override
-    public List<ScoreDo> writeScoreListToExcel(List<ScoreDo> scoreDoList){
+    public List<ScoreDo> writeScoreListToExcel(List<ScoreDo> scoreDoList,Integer contestId){
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("学生oj成绩表");
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String fileName = "学生oj成绩表" + dateFormat.format(new Date()) + ".xls";
+        String fileName = "学生oj成绩表-" + contestId + ".xls";
         int rowNum = 1;
         String[] headers = {"排名","用户名","姓名","题数","罚时","A","B","C","D"};
         HSSFRow row = sheet.createRow(0);
