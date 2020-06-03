@@ -15,13 +15,15 @@ import java.util.List;
 @Service
 public class ScoreToExcelServiceImpl implements ScoreToExcelService{
     @Override
-    public List<ScoreDo> writeScoreListToExcel(List<ScoreDo> scoreDoList,Integer contestId){
+    public List<ScoreDo> writeScoreListToExcel(List<ScoreDo> scoreDoList,Integer contestId,Integer diff){
+        double per = 1.0*diff/scoreDoList.size();
+        double total = 100;
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("学生oj成绩表");
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String fileName = "学生oj成绩表-" + contestId + ".xls";
         int rowNum = 1;
-        String[] headers = {"排名","用户名","姓名","题数","罚时","A","B","C","D"};
+        String[] headers = {"排名","用户名","姓名","题数","罚时","A","B","C","D","成绩"};
         HSSFRow row = sheet.createRow(0);
         for(int i=0;i<headers.length;i++){
             HSSFCell cell = row.createCell(i);
@@ -39,6 +41,7 @@ public class ScoreToExcelServiceImpl implements ScoreToExcelService{
             row1.createCell(6).setCellValue(scoreDo.getProblems().get(1).getPen());
             row1.createCell(7).setCellValue(scoreDo.getProblems().get(2).getPen());
             row1.createCell(8).setCellValue(scoreDo.getProblems().get(3).getPen());
+            row1.createCell(9).setCellValue(Double.valueOf(String.format("%.2f",total-(rowNum-1)*per)));
             rowNum++;
         }
         FileOutputStream fos = null;

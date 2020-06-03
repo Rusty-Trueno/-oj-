@@ -26,4 +26,7 @@ public class ScoreQueryDto implements Serializable {
 
     @ApiModelProperty(value = "测试id")
     Integer contestId;
+
+    @ApiModelProperty(value = "分值差")
+    Integer diff;
 }
