@@ -3,6 +3,8 @@ package com.spider.spider_oj.controller;
 import com.alibaba.fastjson.JSON;
 import com.spider.spider_oj.Service.ScoreToExcelService;
 import com.spider.spider_oj.model.domain.ScoreDo;
+import com.spider.spider_oj.model.dto.ContestResultDto;
+import com.spider.spider_oj.model.dto.FinalScoreQueryDto;
 import com.spider.spider_oj.model.dto.ScoreQueryDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -74,19 +76,42 @@ public class ScoreController {
         return null;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    @PostMapping(value = "/getFinalScore")
+    @ApiOperation(httpMethod = "POST",value = "根据最终测试成绩")
+    public String getFinalScore(@ApiParam(name = "FinalQueryDto")@RequestBody FinalScoreQueryDto scoreQueryDto) {
+        List<ContestResultDto> resultList= new ArrayList<>();
+        List<Integer> contestIds = scoreQueryDto.getContestIds();
+        contestIds.forEach( contestId->{
+            try {
+                URI uri = new URIBuilder("http://10.105.242.83/api/contest/"+contestId+"/board/").build();
+                BasicCookieStore cookieStore = new BasicCookieStore();
+                BasicClientCookie cookie1 = new BasicClientCookie("csrftoken",scoreQueryDto.getCsrftoken());
+                cookie1.setDomain("10.105.242.83");
+                cookie1.setPath("/");
+                BasicClientCookie cookie2 = new BasicClientCookie("sessionid",scoreQueryDto.getSessionid());
+                cookie2.setDomain("10.105.242.83");
+                cookie2.setPath("/");
+                HttpGet httpGet = new HttpGet(uri);
+                httpGet.addHeader("accept","application/json, text/javascript, */*; q=0.01");
+                httpGet.addHeader("user-agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36");
+                httpGet.addHeader("accept-encoding","gzip, deflate");
+                httpGet.addHeader("connection","keep-alive");
+                cookieStore.addCookie(cookie1);
+                cookieStore.addCookie(cookie2);
+                HttpClient client = HttpClientBuilder.create().
+                        setDefaultCookieStore(cookieStore)
+                        .build();
+                HttpResponse response = client.execute(httpGet);
+                HttpEntity entity = response.getEntity();
+                String responseEntity = EntityUtils.toString(entity);
+                List<ScoreDo> scoreDoList = JSON.parseArray(responseEntity,ScoreDo.class);
+                resultList.add(new ContestResultDto(contestId,scoreDoList));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        scoreToExcelService.generateFinalScore(resultList,scoreQueryDto.getDiff());
+        return null;
+    }
 
 }
